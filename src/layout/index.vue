@@ -36,8 +36,11 @@ export default {
 .weather-container{
     min-width: 1200px;
     box-sizing: border-box;
-    background: #f6f9fe  url('../assets/img/header.png') center top no-repeat;
-    padding: 0 70px;
+    background: #f6f9fe  url('../assets/img/bg.jpg') center top no-repeat;
     font-family: "PingFang SC","Microsoft YaHei",Simsun,Helvetica,Arial,sans-serif;
+}
+.container{
+    display: flex;
+    padding: 0 70px;
 }
 </style>

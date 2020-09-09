@@ -107,10 +107,13 @@ export default {
 </script>
 <style lang="less" scoped>
 .header {
+  padding: 0 70px;
+  padding-top: 20px;
   height: 60px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  
   .city-container {
     display: flex;
     position: relative;

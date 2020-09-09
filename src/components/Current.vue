@@ -85,7 +85,8 @@ export default {
 .current {
   margin-top: 30px;
   height: 310px;
-  padding: 20px;
+  padding: 0 70px;
+  padding-top: 20px;
   .ct-origin {
     font-size: 14px;
     color: #fff;
