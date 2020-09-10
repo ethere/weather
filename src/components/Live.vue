@@ -57,7 +57,7 @@
   flex: 0 0 430px;
   .l-top {
     margin-left: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     margin-right: 5px;
     .title {
       font-size: 18px;

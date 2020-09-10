@@ -1,42 +1,42 @@
 <template>
   <div class="current">
-    <p class="ct-origin">中央气象台{{updateTime}}发布</p>
+    <p class="ct-origin">中央气象台{{nowWeather.temperature_time}}发布</p>
     <div class="ct-container">
       <div class="ct-left">
         <div class="ct-main">
-          <span class="ct-temperature">{{curWeather.temperature}}</span>
-          <span class="ct-name">{{curWeather.name}}</span>
+          <span class="ct-temperature">{{nowWeather.temperature}}</span>
+          <span class="ct-name">{{nowWeather.weather}}</span>
           <div class="ct-api">
-            <span @mouseenter="apiDisplay=true" @mouseleave="apiDisplay=false">{{curWeather.api}}</span>
+            <span @mouseenter="apiDisplay=true" @mouseleave="apiDisplay=false">{{nowWeather.aqi}}{{nowWeather.quality?nowWeather.quality:''}}</span>
             <div class="ct-api-detail" v-show="apiDisplay">
-              <p class="ct-api-title">空气质量指数 {{curWeather.api}}</p>
+              <p class="ct-api-title">空气质量指数 {{nowWeather.aqi}}{{nowWeather.quality?nowWeather.quality:''}}</p>
               <table>
                 <tbody>
                   <tr class="line1">
                     <td>
-                      <p class="val">{{curWeather.detailApi['PM2.5']}}</p>
+                      <p class="val">{{nowWeather.aqiDetail && nowWeather.aqiDetail['pm2_5']}}</p>
                       <p class="title">PM2.5</p>
                     </td>
                     <td>
-                      <p class="val">{{curWeather.detailApi['PM10']}}</p>
+                      <p class="val">{{nowWeather.aqiDetail && nowWeather.aqiDetail['pm10']}}</p>
                       <p class="title">PM10</p>
                     </td>
                     <td>
-                      <p class="val">{{curWeather.detailApi['SO2']}}</p>
+                      <p class="val">{{nowWeather.aqiDetail && nowWeather.aqiDetail['so2']}}</p>
                       <p class="title">SO2</p>
                     </td>
                   </tr>
                   <tr>
                     <td>
-                      <p class="val">{{curWeather.detailApi['NO2']}}</p>
+                      <p class="val">{{nowWeather.aqiDetail && nowWeather.aqiDetail['no2']}}</p>
                       <p class="title">NO2</p>
                     </td>
                     <td>
-                      <p class="val">{{curWeather.detailApi['O3']}}</p>
+                      <p class="val">{{nowWeather.aqiDetail && nowWeather.aqiDetail['o3']}}</p>
                       <p class="title">O3</p>
                     </td>
                     <td>
-                      <p class="val">{{curWeather.detailApi['CO']}}</p>
+                      <p class="val">{{nowWeather.aqiDetail && nowWeather.aqiDetail['co']}}</p>
                       <p class="title">CO</p>
                     </td>
                   </tr>
@@ -46,38 +46,37 @@
           </div>
         </div>
         <div class="ct-other">
-          <span class="ct-wind">东风1级</span>
-          <span class="ct-humidity">温度77%</span>
-          <span class="ct-kPa">气压964hPa</span>
+          <span class="ct-wind">{{nowWeather.wind_direction}}   {{nowWeather.wind_power}}</span>
+          <span class="ct-humidity">湿度  {{nowWeather.sd}}</span>
+          <span class="ct-kPa">气压{{nowWeather.air_press}}</span>
         </div>
-        <p class="ct-tip">现在的温度比较舒适~</p>
       </div>
-      <img src="../assets/icon/03.png" class="ct-img" />
+      <img :src="nowWeather.weather_pic" class="ct-img" />
     </div>
   </div>
 </template>
 
 <script>
+import axios from '../http.js';
 export default {
+  props:["currentDatas"],
   data() {
     return {
-      updateTime: "13:45",
       apiDisplay: false,
-      curWeather: {
-        temperature: "28°",
-        name: "多云",
-        api: "29 优",
-        detailApi: {
-          "PM2.5": 21,
-          PM10: 49,
-          SO2: 5,
-          NO2: 13,
-          O3: 100,
-          CO: 0.6,
-        },
-      },
+      nowWeather: null
     };
   },
+  methods:{
+    setNowWeather(){
+      this.nowWeather = {...this.currentDatas};
+    }
+  },
+  watch:{
+    'currentDatas.temperature_time':{
+      handler:'setNowWeather',
+      immediate: true
+    }
+  }
 };
 </script>
 
@@ -197,17 +196,17 @@ export default {
           font-size: 18px;
         }
         .ct-wind {
-          &::before {
-            content: "";
-            display: inline-block;
-            height: 20px;
-            width: 20px;
-            background: url("../assets/icon/all.png");
-            background-position: -144px -191px;
-            background-size: 234px 212px !important;
-            margin-right: 10px;
-            vertical-align: middle;
-          }
+          // &::before {
+          //   content: "";
+          //   display: inline-block;
+          //   height: 20px;
+          //   width: 20px;
+          //   background: url("../assets/icon/all.png");
+          //   background-position: -144px -191px;
+          //   background-size: 234px 212px !important;
+          //   margin-right: 10px;
+          //   vertical-align: middle;
+          // }
         }
         .ct-humidity {
           &::before {
@@ -268,6 +267,7 @@ export default {
     .ct-img {
       float: right;
       margin-right: 100px;
+      width: 150px;
     }
     &::after{
         content: '';

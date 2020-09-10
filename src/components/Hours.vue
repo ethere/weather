@@ -3,73 +3,37 @@
     <div class="h-top">
       <span class="title">逐小时预报</span>
       <a class="origin" href="#">数据来源于中国天气网</a>
-      <a class="h-prev"></a>
-      <a class="h-next"></a>
+      <a class="h-prev" @click="getPrev"></a>
+      <a class="h-next" @click="getNext"></a>
     </div>
-    <ul class="h-datas">
-      <li>
-        <span class="h-time">14:00</span>
+    <ul class="h-datas" :style="{transform:offset}">
+      <li v-for="hour in hoursDatas" :key="hour.time">
+        <span class="h-time">{{hour.time}}</span>
         <i class="h-weather-icon"></i>
-        <span class="h-weather-temp">32°</span>
-      </li>
-      <li>
-        <span class="h-time">14:00</span>
-        <i class="h-weather-icon"></i>
-        <span class="h-weather-temp">32°</span>
-      </li>
-      <li>
-        <span class="h-time">14:00</span>
-        <i class="h-weather-icon"></i>
-        <span class="h-weather-temp">32°</span>
-      </li>
-      <li>
-        <span class="h-time">14:00</span>
-        <i class="h-weather-icon"></i>
-        <span class="h-weather-temp">32°</span>
-      </li>
-      <li>
-        <span class="h-time">14:00</span>
-        <i class="h-weather-icon"></i>
-        <span class="h-weather-temp">32°</span>
-      </li>
-      <li>
-        <span class="h-time">14:00</span>
-        <i class="h-weather-icon"></i>
-        <span class="h-weather-temp">32°</span>
-      </li>
-      <li>
-        <span class="h-time">14:00</span>
-        <i class="h-weather-icon"></i>
-        <span class="h-weather-temp">32°</span>
-      </li>
-      <li>
-        <span class="h-time">14:00</span>
-        <i class="h-weather-icon"></i>
-        <span class="h-weather-temp">32°</span>
-      </li>
-      <li>
-        <span class="h-time">14:00</span>
-        <i class="h-weather-icon"></i>
-        <span class="h-weather-temp">32°</span>
-      </li>
-      <li>
-        <span class="h-time">14:00</span>
-        <i class="h-weather-icon"></i>
-        <span class="h-weather-temp">32°</span>
-      </li>
-      <li>
-        <span class="h-time">14:00</span>
-        <i class="h-weather-icon"></i>
-        <span class="h-weather-temp">32°</span>
-      </li>
-      <li>
-        <span class="h-time">14:00</span>
-        <i class="h-weather-icon"></i>
-        <span class="h-weather-temp">32°</span>
+        <span class="h-weather-temp">{{hour.temperature}}°</span>
       </li>
     </ul>
   </div>
 </template>
+<script>
+export default {
+  name: "Hours",
+  props: ["hoursDatas"],
+  data(){
+    return {
+      offset: 'translateX(0)'
+    }
+  },
+  methods:{
+    getPrev(){
+      this.offset = 'translateX(0)';
+    },
+    getNext(){
+      this.offset = 'translateX(-1140px)';
+    }
+  }
+};
+</script>
 <style lang="less" scoped>
 .hours {
   height: 143px;
@@ -84,7 +48,7 @@
     height: 21px;
     line-height: 21px;
     margin-bottom: 22px;
-    
+
     .title {
       font-size: 18px;
       color: #344665;
@@ -92,14 +56,14 @@
       margin-right: 10px;
 
       &::before {
-      content: "";
-      width: 10px;
-      height: 10px;
-      background: black;
-      border-radius: 50%;
-      display: inline-block;
-      margin-right: 8px;
-    }
+        content: "";
+        width: 10px;
+        height: 10px;
+        background: black;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
+      }
     }
     .origin {
       font-size: 12px;
@@ -128,14 +92,14 @@
     display: flex;
     justify-content: space-between;
     align-items: stretch;
-    width: 100%;
+    transition: 1s;
     height: calc(100% - 43px);
     li {
       display: flex;
       flex-direction: column;
       justify-content: space-around;
       align-items: center;
-      flex: 1 1;
+      flex: 0 0 95px;
       .h-weather-icon {
         height: 30px;
         width: 30px;

@@ -5,8 +5,8 @@
     </div>
     <div class="city-container">
       <div class="current-city" @mouseenter="fcBlock" @mouseleave="fcNone">
-        <span class="belongs" v-if="$store.state.curProvince">{{$store.state.curProvince}}</span>
-        <span class="city">{{$store.state.curCity}}</span>
+        <span class="belongs" v-if="province">{{province}}</span>
+        <span class="city">{{curCity}}</span>
       </div>
       <span class="focus" @click="addFocus">[{{focusText}}]</span>
       <div
@@ -44,6 +44,7 @@
 import CityPanel from "./CityPanel";
 export default {
   name: "Header",
+  props:['cityInfo'],
   components: {
     CityPanel,
   },
@@ -52,8 +53,16 @@ export default {
       focusCity: false,
       cityPanel: false,
       isFocus: false,
-      focusList: []
+      focusList: [],
+      curCity:'北京',
+      province: ''
     };
+  },
+  watch:{
+    'cityInfo.city':{
+      handler:'setCityInfo',
+      immediate: true
+    }
   },
   created(){
     let result = localStorage.getItem('focusList');
@@ -61,12 +70,15 @@ export default {
        this.focusList = result
     }else{
       localStorage.setItem('focusList',[])
-    }
+    };
   },
   methods: {
+    setCityInfo(){
+      this.curCity = this.cityInfo.city;
+      this.province = this.cityInfo.city !== this.cityInfo.province && this.cityInfo.province;
+    },
     addFocus() {
       if (this.focusText === "已关注") return;
-      console.log(typeof this.focusList)
       this.focusList.push(this.$store.state.curCity);
       localStorage.setItem('focusList',this.focusList);
     },
