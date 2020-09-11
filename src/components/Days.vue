@@ -5,100 +5,55 @@
       <a href="#" class="link-15">15日天气预报</a>
     </div>
     <ul class="d-datas">
-      <li>
+      <li v-for="item in day7Info" :key="item.date">
         <div class="item-top">
-          <p class="day">昨天</p>
-          <p class="date">09月09日</p>
-          <p class="weather">多云</p>
-          <img src="../assets/icon/03.png" alt />
+          <p class="day">{{item.week}}</p>
+          <p class="date">{{item.date}}</p>
+          <p class="weather">{{item.day_weather}}</p>
+          <img :src="item.day_weather_pic" alt />
         </div>
         <div class="item-bottom">
-          <img src="../assets/icon/03.png" alt />
-          <p class="weather">小雨</p>
-          <p class="wind">南风 3</p>
-        </div>
-      </li>
-      <li>
-        <div class="item-top">
-          <p class="day">昨天</p>
-          <p class="date">09月09日</p>
-          <p class="weather">多云</p>
-          <img src="../assets/icon/03.png" alt />
-        </div>
-        <div class="item-bottom">
-          <img src="../assets/icon/03.png" alt />
-          <p class="weather">小雨</p>
-          <p class="wind">南风 3</p>
-        </div>
-      </li>
-      <li>
-        <div class="item-top">
-          <p class="day">昨天</p>
-          <p class="date">09月09日</p>
-          <p class="weather">多云</p>
-          <img src="../assets/icon/03.png" alt />
-        </div>
-        <div class="item-bottom">
-          <img src="../assets/icon/03.png" alt />
-          <p class="weather">小雨</p>
-          <p class="wind">南风 3</p>
-        </div>
-      </li>
-      <li>
-        <div class="item-top">
-          <p class="day">昨天</p>
-          <p class="date">09月09日</p>
-          <p class="weather">多云</p>
-          <img src="../assets/icon/03.png" alt />
-        </div>
-        <div class="item-bottom">
-          <img src="../assets/icon/03.png" alt />
-          <p class="weather">小雨</p>
-          <p class="wind">南风 3</p>
-        </div>
-      </li>
-      <li>
-        <div class="item-top">
-          <p class="day">昨天</p>
-          <p class="date">09月09日</p>
-          <p class="weather">多云</p>
-          <img src="../assets/icon/03.png" alt />
-        </div>
-        <div class="item-bottom">
-          <img src="../assets/icon/03.png" alt />
-          <p class="weather">小雨</p>
-          <p class="wind">南风 3</p>
-        </div>
-      </li>
-      <li>
-        <div class="item-top">
-          <p class="day">昨天</p>
-          <p class="date">09月09日</p>
-          <p class="weather">多云</p>
-          <img src="../assets/icon/03.png" alt />
-        </div>
-        <div class="item-bottom">
-          <img src="../assets/icon/03.png" alt />
-          <p class="weather">小雨</p>
-          <p class="wind">南风 3</p>
-        </div>
-      </li>
-      <li>
-        <div class="item-top">
-          <p class="day">昨天</p>
-          <p class="date">09月09日</p>
-          <p class="weather">多云</p>
-          <img src="../assets/icon/03.png" alt />
-        </div>
-        <div class="item-bottom">
-          <img src="../assets/icon/03.png" alt />
-          <p class="weather">小雨</p>
-          <p class="wind">南风 3</p>
+          <img :src="item.night_weather_pic" alt />
+          <p class="weather">{{item.night_weather}}</p>
+          <p class="wind">{{item.night_wind_direction}} {{item.night_wind_power}}</p>
         </div>
       </li>
     </ul>
   </div>
 </template>
+<script>
+export default {
+  data(){
+    return {
+      weekMap:['周日','周一','周二','周三','周四','周五','周六']
+    }
+  },
+  computed:{
+    day7Info(){
+      let list = this.$store.state.day7Datas.filter(item=>{
+        return item;
+      })
+      const week = new Date().getDay();
+      list = list.map((item,i)=>{
+        const month = item.day.slice(4,6);
+        const day = item.day.slice(6,8);
+        item.date = month + '月' + day + '日';
+        if(i === 0){
+          item.week = '今天'
+        }else if(i === 1){
+          item.week = '明天'
+        }else if(i === 2){
+          item.week = '后天'
+        }else{
+          item.week = this.weekMap[(week + i)%7]
+        };
+        return item;
+      })
+      return list;
+    }
+  }
+}
+</script>
 <style lang="less" scoped>
 .days {
   flex: 0 0 740px;

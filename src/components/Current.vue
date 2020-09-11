@@ -1,42 +1,42 @@
 <template>
   <div class="current">
-    <p class="ct-origin">中央气象台{{nowWeather.temperature_time}}发布</p>
+    <p class="ct-origin">中央气象台{{nowInfo.temperature_time}}发布</p>
     <div class="ct-container">
       <div class="ct-left">
         <div class="ct-main">
-          <span class="ct-temperature">{{nowWeather.temperature}}</span>
-          <span class="ct-name">{{nowWeather.weather}}</span>
+          <span class="ct-temperature">{{nowInfo.temperature}}</span>
+          <span class="ct-name">{{nowInfo.weather}}</span>
           <div class="ct-api">
-            <span @mouseenter="apiDisplay=true" @mouseleave="apiDisplay=false">{{nowWeather.aqi}}{{nowWeather.quality?nowWeather.quality:''}}</span>
+            <span @mouseenter="apiDisplay=true" @mouseleave="apiDisplay=false">{{nowInfo.aqi}}{{nowInfo.quality?nowInfo.quality:''}}</span>
             <div class="ct-api-detail" v-show="apiDisplay">
-              <p class="ct-api-title">空气质量指数 {{nowWeather.aqi}}{{nowWeather.quality?nowWeather.quality:''}}</p>
+              <p class="ct-api-title">空气质量指数 {{nowInfo.aqi}}{{nowInfo.quality?nowInfo.quality:''}}</p>
               <table>
                 <tbody>
                   <tr class="line1">
                     <td>
-                      <p class="val">{{nowWeather.aqiDetail && nowWeather.aqiDetail['pm2_5']}}</p>
+                      <p class="val">{{nowInfo.aqiDetail && nowInfo.aqiDetail['pm2_5']}}</p>
                       <p class="title">PM2.5</p>
                     </td>
                     <td>
-                      <p class="val">{{nowWeather.aqiDetail && nowWeather.aqiDetail['pm10']}}</p>
+                      <p class="val">{{nowInfo.aqiDetail && nowInfo.aqiDetail['pm10']}}</p>
                       <p class="title">PM10</p>
                     </td>
                     <td>
-                      <p class="val">{{nowWeather.aqiDetail && nowWeather.aqiDetail['so2']}}</p>
+                      <p class="val">{{nowInfo.aqiDetail && nowInfo.aqiDetail['so2']}}</p>
                       <p class="title">SO2</p>
                     </td>
                   </tr>
                   <tr>
                     <td>
-                      <p class="val">{{nowWeather.aqiDetail && nowWeather.aqiDetail['no2']}}</p>
+                      <p class="val">{{nowInfo.aqiDetail && nowInfo.aqiDetail['no2']}}</p>
                       <p class="title">NO2</p>
                     </td>
                     <td>
-                      <p class="val">{{nowWeather.aqiDetail && nowWeather.aqiDetail['o3']}}</p>
+                      <p class="val">{{nowInfo.aqiDetail && nowInfo.aqiDetail['o3']}}</p>
                       <p class="title">O3</p>
                     </td>
                     <td>
-                      <p class="val">{{nowWeather.aqiDetail && nowWeather.aqiDetail['co']}}</p>
+                      <p class="val">{{nowInfo.aqiDetail && nowInfo.aqiDetail['co']}}</p>
                       <p class="title">CO</p>
                     </td>
                   </tr>
@@ -46,35 +46,26 @@
           </div>
         </div>
         <div class="ct-other">
-          <span class="ct-wind">{{nowWeather.wind_direction}}   {{nowWeather.wind_power}}</span>
-          <span class="ct-humidity">湿度  {{nowWeather.sd}}</span>
-          <span class="ct-kPa">气压{{nowWeather.air_press}}</span>
+          <span class="ct-wind">{{nowInfo.wind_direction}}   {{nowInfo.wind_power}}</span>
+          <span class="ct-humidity">湿度  {{nowInfo.sd}}</span>
+          <span class="ct-kPa">气压{{nowInfo.air_press}}</span>
         </div>
       </div>
-      <img :src="nowWeather.weather_pic" class="ct-img" />
+      <img :src="nowInfo.weather_pic" class="ct-img" />
     </div>
   </div>
 </template>
 
 <script>
-import axios from '../http.js';
 export default {
-  props:["currentDatas"],
   data() {
     return {
-      apiDisplay: false,
-      nowWeather: null
+      apiDisplay: false
     };
   },
-  methods:{
-    setNowWeather(){
-      this.nowWeather = {...this.currentDatas};
-    }
-  },
-  watch:{
-    'currentDatas.temperature_time':{
-      handler:'setNowWeather',
-      immediate: true
+  computed:{
+    nowInfo(){
+      return this.$store.state.curDatas
     }
   }
 };

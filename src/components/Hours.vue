@@ -3,11 +3,11 @@
     <div class="h-top">
       <span class="title">逐小时预报</span>
       <a class="origin" href="#">数据来源于中国天气网</a>
-      <a class="h-prev" @click="getPrev"></a>
       <a class="h-next" @click="getNext"></a>
+      <a class="h-prev" @click="getPrev"></a>
     </div>
     <ul class="h-datas" :style="{transform:offset}">
-      <li v-for="hour in hoursDatas" :key="hour.time">
+      <li v-for="hour in hourDatas" :key="hour.time">
         <span class="h-time">{{hour.time}}</span>
         <i class="h-weather-icon"></i>
         <span class="h-weather-temp">{{hour.temperature}}°</span>
@@ -18,18 +18,22 @@
 <script>
 export default {
   name: "Hours",
-  props: ["hoursDatas"],
   data(){
     return {
-      offset: 'translateX(0)'
+      offset: ''
     }
   },
   methods:{
     getPrev(){
-      this.offset = 'translateX(0)';
+      this.offset = 'translateX(0px)';
     },
     getNext(){
       this.offset = 'translateX(-1140px)';
+    }
+  },
+  computed:{
+    hourDatas(){
+      return this.$store.getters.hourList;
     }
   }
 };
@@ -70,8 +74,8 @@ export default {
       color: #8a9baf;
       text-decoration: none;
     }
-    .h-prev,
-    .h-next {
+    .h-next,
+    .h-prev {
       float: right;
       width: 22px;
       height: 22px;
@@ -80,12 +84,12 @@ export default {
     }
     .h-prev {
       background-image: url(../assets/icon/all.png);
-      background-position: -191px 0;
-      background-size: 234px 212px !important;
+      background-position: -136px -154px;
     }
     .h-next {
       background-image: url(../assets/icon/all.png);
-      background-position: -136px -154px;
+      background-position: -191px 0;
+      background-size: 234px 212px !important;
     }
   }
   .h-datas {

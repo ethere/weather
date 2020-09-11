@@ -5,7 +5,7 @@
     </div>
     <div class="city-container">
       <div class="current-city" @mouseenter="fcBlock" @mouseleave="fcNone">
-        <span class="belongs" v-if="province">{{province}}</span>
+        <span class="belongs" v-if="curProvince">{{curProvince}}</span>
         <span class="city">{{curCity}}</span>
       </div>
       <span class="focus" @click="addFocus">[{{focusText}}]</span>
@@ -17,24 +17,33 @@
       >
         <dl>
           <dt>关注的城市</dt>
-          <dd v-for="(city,index) in focusList" :key="city">
+          <dd
+            v-for="(item,index) in focusDatas"
+            :key="item.city"
+            @mouseenter="cityHov=true"
+            @mouseleave="cityHov=false"
+          >
             <div class="ct-location">
-              <span>{{city}}</span>
-              <button>设为默认</button>
+              <span>{{item.city}}</span>
+              <button
+                @click="defaultCity(city,index)"
+                :value="defaultIndex === index ? cityHov ? '取消默认' : '默认' : '设为默认'"
+                :class="{defaultStyle : defaultIndex === index}"
+              ></button>
             </div>
             <div class="ct-weather">
-              <img src='../assets/icon/03.png' class="wt-icon" />
-              <span>多云</span>
+              <img :src="item.weather_pic" class="wt-icon" />
+              <span>{{item.weather}}</span>
             </div>
             <div class="temperature">
-              22°/29°
+              {{item.temperature}}
               <i class="icon-del" @click="delFocus(index)"></i>
             </div>
           </dd>
         </dl>
       </div>
       <div class="city-search">
-        <input type="text" placeholder="搜索市、区、县等" @click="ctPanel" data-panel/>
+        <input type="text" placeholder="搜索市、区、县等" @click="ctPanel" data-panel />
         <city-panel v-show="cityPanel" />
       </div>
     </div>
@@ -42,9 +51,9 @@
 </template>
 <script>
 import CityPanel from "./CityPanel";
+import axios from "../http.js";
 export default {
   name: "Header",
-  props:['cityInfo'],
   components: {
     CityPanel,
   },
@@ -53,39 +62,26 @@ export default {
       focusCity: false,
       cityPanel: false,
       isFocus: false,
-      focusList: [],
-      curCity:'北京',
-      province: ''
+      defaultIndex: null,
+      cityHov: false
     };
   },
-  watch:{
-    'cityInfo.city':{
-      handler:'setCityInfo',
-      immediate: true
-    }
-  },
-  created(){
-    let result = localStorage.getItem('focusList');
-    if(result instanceof Array){
-       this.focusList = result
-    }else{
-      localStorage.setItem('focusList',[])
-    };
+  created() {
+     this.$store.commit('setFocusList');
   },
   methods: {
-    setCityInfo(){
-      this.curCity = this.cityInfo.city;
-      this.province = this.cityInfo.city !== this.cityInfo.province && this.cityInfo.province;
+    defaultCity(city,index){
+      this.$store.commit('setDefaultCity',city);
+      this.defaultIndex = index;
     },
     addFocus() {
       if (this.focusText === "已关注") return;
-      this.focusList.push(this.$store.state.curCity);
-      localStorage.setItem('focusList',this.focusList);
+      this.$store.commit('addFocusList');
     },
     fcNone() {
       setTimeout(() => {
         this.focusCity = false;
-      }, 0);
+      }, 1000);
     },
     fcBlock() {
       this.focusCity = true;
@@ -94,17 +90,16 @@ export default {
       }
     },
     delFocus(index) {
-      this.focusList.splice(index,1);
-      localStorage.setItem('focusList',this.focusList)
+      this.$store.commit('delFocusCity');
     },
-    ctPanel(){
+    ctPanel() {
       this.cityPanel = true;
-      document.onclick = e=>{
-        if(e.target.dataset.panel === undefined){
+      document.onclick = (e) => {
+        if (e.target.dataset.panel === undefined) {
           this.cityPanel = false;
         }
-      }
-    }
+      };
+    },
   },
   computed: {
     focusText() {
@@ -114,7 +109,24 @@ export default {
         return "添加关注";
       }
     },
-  },
+    curCity() {
+      return this.$store.state.curCity;
+    },
+    curProvince() {
+      const province = this.$store.state.curProvince;
+      if (province && province !== this.curCity) {
+        return province;
+      } else {
+        return "";
+      }
+    },
+    focusDatas(){
+      return this.$store.state.focusDatas
+    },
+    focusList(){
+      return this.$store.state.focusList
+    }
+  }
 };
 </script>
 <style lang="less" scoped>
@@ -125,7 +137,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
+
   .city-container {
     display: flex;
     position: relative;
@@ -189,6 +201,11 @@ export default {
             .ct-location {
               button {
                 opacity: 1;
+                &.defaultStyle {
+                  color: #777;
+                  background: #f7f7f7;
+                  border: 1px solid #cecece;
+                }
               }
             }
             .temperature {
@@ -211,12 +228,18 @@ export default {
               margin-left: 5px;
               cursor: pointer;
               opacity: 0;
+              &.defaultStyle {
+                border: 1px solid #63b6f6;
+                border-radius: 3px;
+                color: #63b6f6;
+                text-align: center;
+              }
             }
           }
-          .ct-weather{
-            .wt-icon{
+          .ct-weather {
+            .wt-icon {
               height: 20px;
-              margin-right: 5px;
+              margin-right: 10px;
             }
           }
 
