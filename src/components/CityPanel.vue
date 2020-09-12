@@ -1,13 +1,9 @@
 <template>
   <div class="city-panel">
-    <dl class="cp-curCity">
-      <dt class="cp-title">当前定位</dt>
-      <dd>
-          <span>
-              {{$store.state.curCity}}
-          </span>
-      </dd>
-    </dl>
+    <div class="cp-curCity">
+      <p class="cp-title">当前定位</p>
+      <span>{{$store.state.curCity}}</span>
+    </div>
     <dl class="cp-history-city" v-show="historyCity.length">
       <dt class="cp-title">
         <span>历史记录</span>
@@ -27,6 +23,7 @@
 </template>
 <script>
 export default {
+  props:["history"],
   data() {
     return {
       hotCitys: [
@@ -52,21 +49,26 @@ export default {
     addHistory(city) {
       if (this.historyCity.indexOf(city) === -1) {
         this.historyCity.unshift(city);
-        if(this.historyCity.length === 5){
-            this.historyCity.pop();
+        if (this.historyCity.length === 5) {
+          this.historyCity.pop();
         }
       }
-      this.$store.dispatch('update',city)
+      this.$store.dispatch("update", city);
     },
   },
-  created(){
-      let result = localStorage.getItem('historyCitys');
-      if(result){
-          this.historyCity = result;
-      }else{
-          localStorage.setItem('historyCitys',[])
-      }
-  }
+  watch:{
+    history(){
+      this.addHistory(this.history)
+    }
+  },
+  created() {
+    let result = localStorage.getItem("historyCitys");
+    if (result) {
+      this.historyCity = result;
+    } else {
+      localStorage.setItem("historyCitys", []);
+    }
+  },
 };
 </script>
 <style lang="less" scoped>
@@ -80,6 +82,8 @@ export default {
   border-radius: 5px;
 
   .cp-curCity {
+    margin: 0 10px;
+    margin-bottom: 10px;
     span {
       &::after {
         content: "";

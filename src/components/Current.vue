@@ -6,10 +6,18 @@
         <div class="ct-main">
           <span class="ct-temperature">{{nowInfo.temperature}}</span>
           <span class="ct-name">{{nowInfo.weather}}</span>
-          <div class="ct-api">
-            <span @mouseenter="apiDisplay=true" @mouseleave="apiDisplay=false">{{nowInfo.aqi}}{{nowInfo.quality?nowInfo.quality:''}}</span>
+          <div class="ct-api" :style="aqiColor">
+            <i class="aqi-icon" :style="aqiStyle"></i>
+            <span
+              @mouseenter="apiDisplay=true"
+              @mouseleave="apiDisplay=false"
+            >{{nowInfo.aqi}} {{nowInfo.quality?nowInfo.quality:''}}</span>
             <div class="ct-api-detail" v-show="apiDisplay">
-              <p class="ct-api-title">空气质量指数 {{nowInfo.aqi}}{{nowInfo.quality?nowInfo.quality:''}}</p>
+              <i class="arrow" :style="aqiArrow"></i>
+              <p
+                class="ct-api-title"
+                :style="aqiColor"
+              >空气质量指数 {{nowInfo.aqi}} {{nowInfo.quality? nowInfo.quality:''}}</p>
               <table>
                 <tbody>
                   <tr class="line1">
@@ -46,8 +54,9 @@
           </div>
         </div>
         <div class="ct-other">
-          <span class="ct-wind">{{nowInfo.wind_direction}}   {{nowInfo.wind_power}}</span>
-          <span class="ct-humidity">湿度  {{nowInfo.sd}}</span>
+          <i class="icon-wind" :style="windDirection" v-show="windDirection"></i>
+          <span class="ct-wind">{{nowInfo.wind_direction}} {{nowInfo.wind_power}}</span>
+          <span class="ct-humidity">湿度 {{nowInfo.sd}}</span>
           <span class="ct-kPa">气压{{nowInfo.air_press}}</span>
         </div>
       </div>
@@ -60,14 +69,96 @@
 export default {
   data() {
     return {
-      apiDisplay: false
+      apiDisplay: false,
+      aqiArrow: '',
+      aqiColor: '',
+      windMap: {
+        北风: "-191px -165px",
+        东风: "-144px -191px",
+        西北风: "-29px -191px",
+        东北风: "-167px -191px",
+        西风: "-191px -50px",
+        南风: "-98px -191px",
+        东南风: "-191px -73px",
+        西南风: "-75px -191px",
+      },
+      aqiMap: {
+        优: {
+          pos: "-216px -1px",
+          color: "#a3d765",
+        },
+        良: {
+          pos: "-216px -21px",
+          color: "#f0cc35",
+        },
+        轻度污染: {
+          pos: "-216px -42px",
+          color: "#DD7907",
+        },
+        中度污染: {
+          pos: "-216px -105px",
+          color: "#DC143C",
+        },
+        重度污染: {
+          pos: "-216px -63px",
+          color: "#8A5A83",
+        },
+        严重污染: {
+          pos: "-216px -84px",
+          color: "8E236B",
+        },
+      },
     };
   },
-  computed:{
-    nowInfo(){
-      return this.$store.state.curDatas
-    }
-  }
+  created(){
+    this.$store.commit('setFocusList');
+    this.$store.dispatch('getFocusDatas');
+  },
+  computed: {
+    nowInfo() {
+      return this.$store.state.curDatas;
+    },
+    windDirection() {
+      const position = this.windMap[this.nowInfo.wind_direction];
+      if (!position) return "";
+      return {
+        backgroundPosition: position,
+      };
+    },
+    aqiStyle() {
+      if(this.nowInfo && !this.nowInfo.quality){
+        if(this.nowInfo.aqi < 50){
+          this.nowInfo.quality = '优'
+        }else if(this.nowInfo.aqi < 100){
+          this.nowInfo.quality = '良'
+        }else if(this.nowInfo.aqi < 150){
+          this.nowInfo.quality = '轻度污染'
+        }else if(this.nowInfo.aqi < 200){
+          this.nowInfo.quality = '中度污染'
+        }else if(this.nowInfo.aqi < 300){
+          this.nowInfo.quality = '重度污染'
+        }else{
+          this.nowInfo.quality = '严重污染'
+        }
+      }
+      
+      let aqiInfo = this.aqiMap[this.nowInfo.quality];
+      if (!aqiInfo)
+        aqiInfo = {
+          pos: "-216px 0",
+          color: '#a3d765'
+        };
+      this.aqiColor = {
+        backgroundColor: aqiInfo.color,
+      }
+      this.aqiArrow = {
+        'borderBottomColor': aqiInfo.color
+      }
+      return {
+        backgroundPosition: aqiInfo.pos,
+      };
+    },
+  },
 };
 </script>
 
@@ -107,24 +198,28 @@ export default {
           position: relative;
           margin-right: 24px;
           cursor: pointer;
-          background-color: #a3d765;
           border-radius: 18px;
           height: 18px;
           line-height: 18px;
           font-size: 14px;
           color: #fff;
           padding: 3px 10px 3px 3px;
-          &::before {
-            content: "";
+          .aqi-icon {
             display: inline-block;
             height: 18px;
             width: 18px;
             border-radius: 50%;
             background: #fff url("../assets/icon/all.png");
-            background-position: -216px -1px;
             background-size: 234px 212px !important;
             margin-right: 4px;
-            vertical-align: middle;
+            vertical-align: -3px;
+          }
+          .arrow {
+            border: 10px solid transparent;
+            border-bottom-color: #a3d765;
+            position: absolute;
+            left: 46%;
+            top: -19px;
           }
           .ct-api-detail {
             background: #fff;
@@ -134,14 +229,6 @@ export default {
             height: 169px;
             width: 254px;
             border-radius: 6px;
-            &::before {
-              content: "";
-              border: 10px solid transparent;
-              border-bottom-color: #a3d765;
-              position: absolute;
-              left: 46%;
-              top: -19px;
-            }
             .ct-api-title {
               border-radius: 6px 6px 0 0;
               height: 42px;
@@ -186,18 +273,14 @@ export default {
           line-height: 20px;
           font-size: 18px;
         }
-        .ct-wind {
-          // &::before {
-          //   content: "";
-          //   display: inline-block;
-          //   height: 20px;
-          //   width: 20px;
-          //   background: url("../assets/icon/all.png");
-          //   background-position: -144px -191px;
-          //   background-size: 234px 212px !important;
-          //   margin-right: 10px;
-          //   vertical-align: middle;
-          // }
+        .icon-wind {
+          display: inline-block;
+          height: 20px;
+          width: 20px;
+          background: url("../assets/icon/all.png");
+          background-size: 234px 212px !important;
+          margin-right: 6px;
+          vertical-align: -4px;
         }
         .ct-humidity {
           &::before {
@@ -260,10 +343,10 @@ export default {
       margin-right: 100px;
       width: 150px;
     }
-    &::after{
-        content: '';
-        display: block;
-        clear: both;
+    &::after {
+      content: "";
+      display: block;
+      clear: both;
     }
   }
 }

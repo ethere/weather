@@ -29,7 +29,7 @@ export default {
     containerFooter,
   },
   created() {
-    let defaultCity = this.$store.state.defaultCity;
+    let defaultCity = localStorage.getItem('defaultCity');
     if (defaultCity) {
       this.$store.dispatch("update", defaultCity);
     } else {

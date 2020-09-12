@@ -10,7 +10,7 @@
       <li v-for="hour in hourDatas" :key="hour.time">
         <span class="h-time">{{hour.time}}</span>
         <i class="h-weather-icon"></i>
-        <span class="h-weather-temp">{{hour.temperature}}°</span>
+        <span class="h-weather-temp">{{hour.temperature}}</span>
       </li>
     </ul>
   </div>

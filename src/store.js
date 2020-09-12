@@ -8,15 +8,14 @@ export default new Vuex.Store({
     state: {
         curCity: '长沙',
         curProvince: '湖南',
-        defaultCity: '',
         curDatas: {},
         sunTimes: null,
         hourDatas: [],
         day7Datas: [],
         liveDatas: [],
         day15Datas: [],
-        focusList: [],//关注的城市列表 
-        focusDatas: []//关注的城市列表对应的天气
+        focusList: [], //关注的城市列表 
+        focusDatas: [] //关注的城市列表对应的天气
     },
     getters: {
         hourList(state) {
@@ -26,7 +25,13 @@ export default new Vuex.Store({
                 const end = times[1].slice(0, 2);
                 let bIndex, eIndex;
                 let newList = state.hourDatas.map((hour, index) => {
-                    const time = hour.time.slice(8, 10);
+                    let time;
+                    if (hour.time.length > 8) {
+                        time = hour.time.slice(8, 10);
+                    } else {
+                        time = hour.time.slice(0, 2)
+                    }
+
                     if (time == "00") {
                         hour.time = "明天";
                     } else {
@@ -40,7 +45,7 @@ export default new Vuex.Store({
                     }
                     return {
                         time: hour.time,
-                        temperature: hour.temperature
+                        temperature: hour.temperature + '°'
                     };
                 });
                 newList.splice(bIndex, 0, {
@@ -56,9 +61,6 @@ export default new Vuex.Store({
         }
     },
     mutations: {
-        setDefaultCity(state, city) {
-            state.defaultCity = city;
-        },
         setPosition(state, cityInfo) {
             state.curCity = cityInfo.city;
             state.curProvince = cityInfo.province;
@@ -93,8 +95,8 @@ export default new Vuex.Store({
         },
         setFocusList(state) {
             let result = localStorage.getItem("focusList");
-            if (result instanceof Array) {
-                state.focusList = result;
+            if (result) {
+                state.focusList = result.split(',');
             } else {
                 localStorage.setItem("focusList", []);
             }
@@ -103,17 +105,25 @@ export default new Vuex.Store({
             state.focusList.unshift(state.curCity);
             localStorage.setItem("focusList", state.focusList);
             let curCity = state.day7Datas[0];
+            let weather;
+            if (curCity.day_weather === curCity.night_weather) {
+                weather = curCity.day_weather
+            } else {
+                weather = `${curCity.day_weather}转${curCity.night_weather}`
+            }
             state.focusDatas.unshift({
-                city:state.curCity,
-                weather: `${curCity.day_weather}转${curCity.night_weather}`,
+                city: state.curCity,
+                weather,
                 temperature: `${curCity.day_air_temperature}°/${curCity.night_air_temperature}°`,
                 weather_pic: state.curDatas.weather_pic
             });
-            console.log(state.focusDatas)
         },
-        delFocusCity(state,index){
-            state.focusList.splice(index,1);
-            localStorage.setItem("focusList", this.focusList);
+        delFocusCity(state, index) {
+            state.focusList.splice(index, 1);
+            state.focusDatas.splice(index, 1);
+            console.log(state.focusDatas);
+            console.log(state.focusList)
+            localStorage.setItem("focusList", state.focusList);
         },
         setFocusData(state, focusDatas) {
             state.focusDatas = focusDatas;
@@ -229,23 +239,28 @@ export default new Vuex.Store({
                         area: city,
                     },
                 }).then(res => {
-                    console.log(res)
-                    // const weather_pic = res.now.weather_pic;
-                    // const {
-                    //     day_air_temperature,
-                    //     day_weather,
-                    //     night_air_temperature,
-                    //     night_weather,
-                    // }
-                    // list.push({
-                    //     city,
-                    //     weather: `${day_weather}转${night_weather}`,
-                    //     temperature: `${day_air_temperature}°/${night_air_temperature}°`,
-                    //     picSrc:weather_pic
-                    // });
-                    // if(list.length === context.state.focusList.length){
-                    //     context.commit('setFocusData',list)
-                    // }
+                    const weather_pic = res.now.weather_pic;
+                    const {
+                        day_air_temperature,
+                        day_weather,
+                        night_air_temperature,
+                        night_weather,
+                    } = res.f1;
+                    let weather;
+                    if (day_weather === night_weather) {
+                        weather = day_weather
+                    } else {
+                        weather = `${day_weather}转${night_weather}`
+                    }
+                    list.push({
+                        city,
+                        weather,
+                        temperature: `${day_air_temperature}°/${night_air_temperature}°`,
+                        weather_pic
+                    });
+                    if (list.length === context.state.focusList.length) {
+                        context.commit('setFocusData', list)
+                    }
                 });
             });
 
