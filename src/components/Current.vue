@@ -1,7 +1,7 @@
 <template>
   <div class="current">
     <p class="ct-origin">中央气象台{{nowInfo.temperature_time}}发布</p>
-    <div class="ct-container">
+    <div class="ct-container clearFix">
       <div class="ct-left">
         <div class="ct-main">
           <span class="ct-temperature">{{nowInfo.temperature}}</span>
@@ -70,8 +70,8 @@ export default {
   data() {
     return {
       apiDisplay: false,
-      aqiArrow: '',
-      aqiColor: '',
+      aqiArrow: "",
+      aqiColor: "",
       windMap: {
         北风: "-191px -165px",
         东风: "-144px -191px",
@@ -110,12 +110,13 @@ export default {
       },
     };
   },
-  created(){
-    this.$store.commit('setFocusList');
-    this.$store.dispatch('getFocusDatas');
+  created() {
+    this.$store.commit("setFocusList");
+    this.$store.dispatch("getFocusDatas");
   },
   computed: {
     nowInfo() {
+      console.log(this.$store.state.curDatas)
       return this.$store.state.curDatas;
     },
     windDirection() {
@@ -126,34 +127,34 @@ export default {
       };
     },
     aqiStyle() {
-      if(this.nowInfo && !this.nowInfo.quality){
-        if(this.nowInfo.aqi < 50){
-          this.nowInfo.quality = '优'
-        }else if(this.nowInfo.aqi < 100){
-          this.nowInfo.quality = '良'
-        }else if(this.nowInfo.aqi < 150){
-          this.nowInfo.quality = '轻度污染'
-        }else if(this.nowInfo.aqi < 200){
-          this.nowInfo.quality = '中度污染'
-        }else if(this.nowInfo.aqi < 300){
-          this.nowInfo.quality = '重度污染'
-        }else{
-          this.nowInfo.quality = '严重污染'
+      if (this.nowInfo && !this.nowInfo.quality) {
+        if (this.nowInfo.aqi < 50) {
+          this.nowInfo.quality = "优";
+        } else if (this.nowInfo.aqi < 100) {
+          this.nowInfo.quality = "良";
+        } else if (this.nowInfo.aqi < 150) {
+          this.nowInfo.quality = "轻度污染";
+        } else if (this.nowInfo.aqi < 200) {
+          this.nowInfo.quality = "中度污染";
+        } else if (this.nowInfo.aqi < 300) {
+          this.nowInfo.quality = "重度污染";
+        } else {
+          this.nowInfo.quality = "严重污染";
         }
       }
-      
+
       let aqiInfo = this.aqiMap[this.nowInfo.quality];
       if (!aqiInfo)
         aqiInfo = {
           pos: "-216px 0",
-          color: '#a3d765'
+          color: "#a3d765",
         };
       this.aqiColor = {
         backgroundColor: aqiInfo.color,
-      }
+      };
       this.aqiArrow = {
-        'borderBottomColor': aqiInfo.color
-      }
+        borderBottomColor: aqiInfo.color,
+      };
       return {
         backgroundPosition: aqiInfo.pos,
       };
@@ -214,13 +215,6 @@ export default {
             margin-right: 4px;
             vertical-align: -3px;
           }
-          .arrow {
-            border: 10px solid transparent;
-            border-bottom-color: #a3d765;
-            position: absolute;
-            left: 46%;
-            top: -19px;
-          }
           .ct-api-detail {
             background: #fff;
             position: absolute;
@@ -229,6 +223,13 @@ export default {
             height: 169px;
             width: 254px;
             border-radius: 6px;
+            .arrow {
+              border: 10px solid transparent;
+              border-bottom-color: #a3d765;
+              position: absolute;
+              left: 46%;
+              top: -19px;
+            }
             .ct-api-title {
               border-radius: 6px 6px 0 0;
               height: 42px;
@@ -243,21 +244,21 @@ export default {
               padding: 10px;
               tr {
                 height: 63px;
-              }
-              .line1 {
-                border-bottom: 1px solid #efefef;
-              }
-              td {
-                text-align: center;
-                .val {
-                  font-size: 14px;
-                  color: #555;
-                  line-height: 24px;
+                &.line1 {
+                  border-bottom: 1px solid #efefef;
                 }
-                .title {
-                  font-size: 12px;
-                  color: #9f9f9f;
-                  line-height: 24px;
+                td {
+                  text-align: center;
+                  .val {
+                    font-size: 14px;
+                    color: #555;
+                    line-height: 24px;
+                  }
+                  .title {
+                    font-size: 12px;
+                    color: #9f9f9f;
+                    line-height: 24px;
+                  }
                 }
               }
             }
@@ -309,44 +310,11 @@ export default {
           }
         }
       }
-      .ct-tip {
-        vertical-align: middle;
-        font-size: 20px;
-        color: #fff;
-        line-height: 20px;
-        height: 20px;
-        margin-top: 20px;
-        &::before {
-          content: "";
-          display: inline-block;
-          width: 10px;
-          height: 10px;
-          border-radius: 50%;
-          background: #fff;
-          margin-right: 6px;
-        }
-        &::after {
-          content: "";
-          display: inline-block;
-          height: 20px;
-          width: 20px;
-          background: url("../assets/icon/all.png");
-          background-position: -121px -191px;
-          background-size: 234px 212px !important;
-          margin-left: 10px;
-          vertical-align: middle;
-        }
-      }
     }
     .ct-img {
       float: right;
       margin-right: 100px;
       width: 150px;
-    }
-    &::after {
-      content: "";
-      display: block;
-      clear: both;
     }
   }
 }

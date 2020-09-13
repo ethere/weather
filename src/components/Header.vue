@@ -11,7 +11,7 @@
       <div class="focus-city" v-show="focusCity" @mouseenter="detailEnter" @mouseleave="detailLeave">
         <dl>
           <dt>关注的城市</dt>
-          <dd v-for="(item,index) in focusDatas" :key="item.city" @mouseenter="hovEnter(index)">
+          <dd v-for="(item,index) in focusDatas" :key="item.city" @mouseenter="hovEnter(index)" class="clearFix">
             <div class="ct-location">
               <span>{{item.city}}</span>
               <button
@@ -69,7 +69,7 @@ export default {
     focusLeave() {
       this.leaveTimer = setTimeout(() => {
         this.focusCity = false;
-      }, 1000);
+      }, 300);
     },
     hovEnter(index){
       this.hovIndex = index;
@@ -148,9 +148,6 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-button {
-  outline: none;
-}
 .header {
   padding: 0 70px;
   padding-top: 20px;
@@ -272,11 +269,6 @@ button {
               cursor: pointer;
               opacity: 0;
             }
-          }
-          &::after{
-            clear: both;
-            display: block;
-            content: '';
           }
         }
       }

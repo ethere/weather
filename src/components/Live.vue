@@ -1,11 +1,11 @@
 <template>
   <div class="live">
-    <div class="l-top">
+    <div class="l-top clearFix">
       <span class="title">生活指数</span>
       <a class="l-next" @click="getNext"></a>
       <a class="l-prev" @click="getPrev"></a>
     </div>
-    <ul class="l-datas" v-if="liveInfo" :style="otherIndex">
+    <ul class="l-datas clearFix" v-if="liveInfo" :style="otherIndex">
       <li v-for="(val,indexName) in liveInfo" :key="indexName">
         <div class="ct-sub">
           <i class="icon" :class="getClass(indexName)"></i>
@@ -97,11 +97,6 @@ export default {
       background-image: url(../assets/icon/all.png);
       background-position: -191px 0;
     }
-    &::after {
-      content: "";
-      clear: both;
-      display: block;
-    }
   }
   .l-datas {
     width: 840px;
@@ -186,11 +181,6 @@ export default {
         font-size: 13px;
         line-height: 1.5;
       }
-    }
-    &::after {
-      content: "";
-      clear: both;
-      display: block;
     }
   }
 }

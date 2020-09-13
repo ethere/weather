@@ -4,7 +4,7 @@
       <p class="cp-title">当前定位</p>
       <span>{{$store.state.curCity}}</span>
     </div>
-    <dl class="cp-history-city" v-show="historyCity.length">
+    <dl class="cp-history-city clearFix" v-show="historyCity.length">
       <dt class="cp-title">
         <span>历史记录</span>
         <span class="cp-clear" @click="clearHistory">清除</span>
@@ -13,7 +13,7 @@
         <span @click="addHistory(city)">{{city}}</span>
       </dd>
     </dl>
-    <dl class="cp-hotCitys">
+    <dl class="cp-hotCitys clearFix">
       <dt class="cp-title">热门城市</dt>
       <dd v-for="city in hotCitys" :key="city">
         <span @click="addHistory(city)">{{city}}</span>
@@ -23,7 +23,7 @@
 </template>
 <script>
 export default {
-  props:["history"],
+  props: ["history"],
   data() {
     return {
       hotCitys: [
@@ -56,10 +56,10 @@ export default {
       this.$store.dispatch("update", city);
     },
   },
-  watch:{
-    history(){
-      this.addHistory(this.history)
-    }
+  watch: {
+    history() {
+      this.addHistory(this.history);
+    },
   },
   created() {
     let result = localStorage.getItem("historyCitys");
@@ -80,25 +80,6 @@ export default {
   background-color: #fff;
   box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.15);
   border-radius: 5px;
-
-  .cp-curCity {
-    margin: 0 10px;
-    margin-bottom: 10px;
-    span {
-      &::after {
-        content: "";
-        display: inline-block;
-        height: 16px;
-        width: 16px;
-        background-image: url("../assets/icon/all.png");
-        background-position: -210px 52px;
-        background-size: 234px 212px !important;
-        margin-right: 7px;
-        vertical-align: -2px;
-      }
-    }
-  }
-
   .cp-title {
     font-size: 12px;
     color: #9f9f9f;
@@ -119,6 +100,24 @@ export default {
       margin-right: 20px;
     }
   }
+  .cp-curCity {
+    margin: 0 10px;
+    margin-bottom: 10px;
+    span {
+      &::after {
+        content: "";
+        display: inline-block;
+        height: 16px;
+        width: 16px;
+        background-image: url("../assets/icon/all.png");
+        background-position: -210px 52px;
+        background-size: 234px 212px !important;
+        margin-right: 7px;
+        vertical-align: -2px;
+      }
+    }
+  }
+
   dl {
     margin: 0 10px;
     dd {
@@ -140,11 +139,6 @@ export default {
           border-radius: 2px;
         }
       }
-    }
-    &::after {
-      content: "";
-      display: block;
-      clear: both;
     }
   }
 }

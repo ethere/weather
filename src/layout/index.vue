@@ -29,7 +29,7 @@ export default {
     containerFooter,
   },
   created() {
-    let defaultCity = localStorage.getItem('defaultCity');
+    let defaultCity = localStorage.getItem("defaultCity");
     if (defaultCity) {
       this.$store.dispatch("update", defaultCity);
     } else {
@@ -39,7 +39,7 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 @import url("../assets/css/reset.css");
 .weather-container {
   min-width: 1200px;
@@ -51,5 +51,11 @@ export default {
 .container {
   display: flex;
   padding: 0 70px;
+}
+
+.clearFix::after {
+  clear: both;
+  display: block;
+  content: "";
 }
 </style>

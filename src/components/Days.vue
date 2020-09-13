@@ -3,7 +3,7 @@
     <div class="d-top">
       <span class="title">7日天气预报</span>
     </div>
-    <ul class="d-datas">
+    <ul class="d-datas clearFix">
       <li v-for="item in day7Info" :key="item.date">
         <div class="item-top">
           <p class="day">{{item.week}}</p>
@@ -75,6 +75,7 @@ export default {
     drawChart(){
       if(this.dom === null || this.tempList.length === 0) return;
       const ctx = this.dom.getContext('2d');
+      ctx.clearRect(0, 0, this.dom.width, this.dom.height);
       const min = this.minTemp;
       const scale = 100/(this.maxTemp-min); //刻度
       const mapPos = this.tempList.map((item,i) => {
@@ -143,7 +144,7 @@ export default {
         ctx.fillText(item.tempH + '°',item.x - 15 ,item.high - 10);
         //最低温度
         ctx.beginPath();
-        ctx.fillText(item.tempL + '°',item.x - 15,item.low - 10);
+        ctx.fillText(item.tempL + '°',item.x - 15,item.low + 30);
       });
     }
   }
@@ -236,11 +237,6 @@ export default {
           height: 12px;
         }
       }
-    }
-    &::after{
-      clear: both;
-      display: block;
-      content: '';
     }
   }
   .d-chart {

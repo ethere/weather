@@ -77,6 +77,8 @@ export default new Vuex.Store({
         },
         setDayInfo(state, dayInfo) {
             state.day15Datas = dayInfo.map(item => {
+                //http://app1.showapi.com/weather/icon/day/00.png
+                //http://app1.showapi.com/weather/icon/night/01.png
                 return (
                     item && {
                         day: item.daytime,

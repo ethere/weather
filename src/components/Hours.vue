@@ -8,9 +8,9 @@
     </div>
     <ul class="h-datas" :style="{transform:offset}">
       <li v-for="hour in hourDatas" :key="hour.time">
-        <span class="h-time">{{hour.time}}</span>
+        <span>{{hour.time}}</span>
         <img class="h-weather-icon" :src="hour.iconSrc">
-        <span class="h-weather-temp">{{hour.temperature}}</span>
+        <span>{{hour.temperature}}</span>
       </li>
     </ul>
   </div>
