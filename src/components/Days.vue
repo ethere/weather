@@ -141,10 +141,10 @@ export default {
         ctx.fillStyle = 'rgba(0,0,0,.5)';
         ctx.font = "18px Arial";
         ctx.beginPath();
-        ctx.fillText(item.tempH + '°',item.x - 15 ,item.high - 10);
+        ctx.fillText(item.tempH + '°',item.x - 10 ,item.high - 15);
         //最低温度
         ctx.beginPath();
-        ctx.fillText(item.tempL + '°',item.x - 15,item.low + 30);
+        ctx.fillText(item.tempL + '°',item.x - 10,item.low + 30);
       });
     }
   }

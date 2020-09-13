@@ -59,3 +59,7 @@ css样式方面，滑动的效果使用了transition和transform:translateX()来
 
 1. 天气图标的请求
 2. css部分的规范化
+
+## 新增的知识点
+
+1. fillText的后两个参数是 text的左下角那个点坐标，而不是text的左上角点坐标
