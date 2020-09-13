@@ -1,37 +1,36 @@
 <template>
   <div class="header">
-    <div class="logo">
+    <div>
       <img src="../assets/img/logo.png" />
     </div>
     <div class="city-container">
-      <div class="current-city" @mouseover="focusCity=true">
+      <div class="current-city" @mouseenter="focusCity=true" @mouseleave="focusLeave">
         <span class="belongs" v-if="curProvince">{{curProvince}}</span>
         <span class="city">{{curCity}}</span>
-        <div class="focus-city" v-show="focusCity">
-          <dl @mouseleave="focusLeave">
-            <dt>关注的城市</dt>
-            <dd v-for="(item,index) in focusDatas" :key="item.city" @mouseenter="focusHov(index)">
-              <div class="ct-location">
-                <span>{{item.city}}</span>
-                <button
-                  @click="setDefaultCity(item.city,index)"
-                  :class="{defaultStyle : defaultIndex == index}"
-                >{{defaultIndex == index ? hovIndex == index ? '取消默认' : '默认' : '设为默认'}}</button>
-              </div>
-              <div class="ct-weather">
-                <img :src="item.weather_pic" class="wt-icon" />
-                <span>{{item.weather}}</span>
-              </div>
-              <div class="temperature">
-                {{item.temperature}}
-                <i class="icon-del" @click="delFocus(index)"></i>
-              </div>
-            </dd>
-          </dl>
-        </div>
       </div>
-      <span class="focus" @click="addFocus">[{{focusText}}]</span>
-
+      <div class="focus-city" v-show="focusCity" @mouseenter="detailEnter" @mouseleave="detailLeave">
+        <dl>
+          <dt>关注的城市</dt>
+          <dd v-for="(item,index) in focusDatas" :key="item.city" @mouseenter="hovEnter(index)">
+            <div class="ct-location">
+              <span>{{item.city}}</span>
+              <button
+                @click="setDefaultCity(item.city)"
+                :class="{defaultStyle : defaultCity == item.city}"
+              >{{defaultCity == item.city ? hovIndex == index ? '取消默认' : '默认' : '设为默认'}}</button>
+            </div>
+            <div class="ct-weather">
+              <img :src="item.weather_pic" class="wt-icon" />
+              <span>{{item.weather}}</span>
+            </div>
+            <div class="ct-temperature">
+              {{item.temperature}}
+              <i class="icon-del" @click="delFocus(index)"></i>
+            </div>
+          </dd>
+        </dl>
+      </div>
+      <span class="focus-text" @click="addFocus">[{{focusText}}]</span>
       <div class="city-search">
         <input type="text" placeholder="搜索市、区、县等" @click="ctPanel" data-panel v-model="chooseCity" />
         <div class="searchCity" v-show="chooseCity">
@@ -55,40 +54,46 @@ export default {
       focusCity: false,
       cityPanel: false,
       isFocus: false,
-      defaultIndex: null,
       hovIndex: null,
       chooseCity: "",
       history: "",
       defaultCity: "",
-      leaveTimer: ''
+      leaveTimer: null,
     };
   },
   created() {
     this.$store.commit("setFocusList");
+    this.defaultCity = localStorage.getItem("defaultCity");
   },
   methods: {
     focusLeave() {
-      this.focusCity = false;
-      this.hovIndex = null;
+      this.leaveTimer = setTimeout(() => {
+        this.focusCity = false;
+      }, 1000);
     },
-    focusHov(index) {
+    hovEnter(index){
       this.hovIndex = index;
-      this.focusCity = true
+      this.detailEnter()
+    },
+    detailEnter() {
+      clearTimeout(this.leaveTimer);
+    },
+    detailLeave() {
+      this.hovIndex = null;
+      this.focusLeave()
     },
     changeCity() {
       this.$store.dispatch("update", this.chooseCity);
       this.history = this.chooseCity;
       this.chooseCity = "";
     },
-    setDefaultCity(city, index) {
+    setDefaultCity(city) {
       if (this.defaultCity === city) {
         localStorage.removeItem("defaultCity");
-        this.defaultCity = "";
-        this.defaultIndex = "";
+        this.defaultCity = null;
       } else {
         localStorage.setItem("defaultCity", city);
         this.defaultCity = city;
-        this.defaultIndex = index;
       }
     },
     addFocus() {
@@ -137,10 +142,7 @@ export default {
       return this.$store.state.focusDatas;
     },
     focusList() {
-      this.defaultCity = localStorage.getItem("defaultCity");
-      const list = this.$store.state.focusList;
-      this.defaultIndex = list.indexOf(this.defaultCity);
-      return list;
+      return this.$store.state.focusList;
     },
   },
 };
@@ -156,13 +158,11 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   .city-container {
-    display: flex;
     position: relative;
-    align-items: center;
     .current-city {
       cursor: pointer;
+      float: left;
       &::before {
         content: "";
         display: inline-block;
@@ -180,81 +180,85 @@ button {
         font-size: 16px;
         color: #fff;
       }
-      .focus-city {
-        position: absolute;
-        top: 40px;
-        left: 4px;
-        width: 100%;
-        border-radius: 4px;
-        background-color: #fff;
-        padding: 10px 0px;
-        dl {
-          dt {
-            font-size: 12px;
-            color: #9f9f9f;
-            height: 17px;
-            line-height: 17px;
-            padding-left: 20px;
-          }
-          dd {
-            display: flex;
-            justify-content: space-between;
-            height: 32px;
-            line-height: 32px;
-            font-size: 14px;
-            color: #555;
-            letter-spacing: 0;
-            padding-left: 20px;
-            padding-right: 10px;
+    }
+    .focus-city {
+      width: 418px;
+      min-height: 86px;
+      position: absolute;
+      top: 40px;
+      left: 5px;
 
-            &:hover {
-              background-color: #f4f4f4;
-              .ct-location {
-                button {
-                  opacity: 1;
-                  &.defaultStyle {
-                    color: #777;
-                    background: #f7f7f7;
-                    border: 1px solid #cecece;
-                  }
-                }
-              }
-              .temperature {
-                .icon-del {
-                  opacity: 1;
-                }
-              }
-            }
+      border-radius: 4px;
+      background-color: #fff;
+      padding: 10px;
+      dl {
+        dt {
+          font-size: 12px;
+          color: #9f9f9f;
+          height: 17px;
+          line-height: 17px;
+          padding-left: 20px;
+        }
+        dd {
+          height: 32px;
+          line-height: 32px;
+          font-size: 14px;
+          color: #555;
+          letter-spacing: 0;
+          padding-left: 20px;
+          padding-right: 10px;
 
+          &:hover {
+            background-color: #f4f4f4;
             .ct-location {
               button {
-                font-size: 12px;
-                color: #777;
-                background: #f7f7f7;
-                border: 1px solid #cecece;
-                border-radius: 4px;
-                height: 18px;
-                line-height: 18px;
-                padding: 0 4px;
-                margin-left: 5px;
-                cursor: pointer;
-                opacity: 0;
+                opacity: 1;
                 &.defaultStyle {
-                  border: 1px solid #63b6f6;
-                  border-radius: 3px;
-                  color: #63b6f6;
-                  text-align: center;
-                  opacity: 1;
+                  color: #777;
+                  background: #f7f7f7;
+                  border: 1px solid #cecece;
                 }
               }
             }
-            .ct-weather {
-              .wt-icon {
-                height: 20px;
-                margin-right: 10px;
+            .ct-temperature {
+              .icon-del {
+                opacity: 1;
               }
             }
-
+          }
+          .ct-location {
+            float: left;
+            width: 130px;
+            button {
+              font-size: 12px;
+              color: #777;
+              background: #f7f7f7;
+              border: 1px solid #cecece;
+              border-radius: 4px;
+              height: 18px;
+              line-height: 18px;
+              padding: 0 4px;
+              margin-left: 5px;
+              cursor: pointer;
+              opacity: 0;
+              &.defaultStyle {
+                border: 1px solid #63b6f6;
+                border-radius: 3px;
+                color: #63b6f6;
+                text-align: center;
+                opacity: 1;
+              }
+            }
+          }
+          .ct-weather {
+            float: left;
+            .wt-icon {
+              height: 20px;
+              margin-right: 10px;
+            }
+          }
+          .ct-temperature {
+            float: right;
             .icon-del {
               background-image: url("../assets/icon/all.png");
               background-position: -216px 68px;
@@ -269,10 +273,16 @@ button {
               opacity: 0;
             }
           }
+          &::after{
+            clear: both;
+            display: block;
+            content: '';
+          }
         }
       }
     }
-    .focus {
+    .focus-text {
+      float: left;
       font-size: 14px;
       color: #fff;
       opacity: 0.7;
@@ -280,10 +290,11 @@ button {
       cursor: pointer;
       margin-top: 1px;
     }
-
     .city-search {
+      float: left;
       color: #555;
       position: relative;
+      margin-top: -5px;
       input {
         border: none;
         outline: none;

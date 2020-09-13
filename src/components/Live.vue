@@ -2,61 +2,58 @@
   <div class="live">
     <div class="l-top">
       <span class="title">生活指数</span>
-      <a class="l-prev"></a>
-      <a class="l-next"></a>
+      <a class="l-next" @click="getNext"></a>
+      <a class="l-prev" @click="getPrev"></a>
     </div>
-    <ul class="l-datas" v-if="liveInfo">
-      <li>
+    <ul class="l-datas" v-if="liveInfo" :style="otherIndex">
+      <li v-for="(val,indexName) in liveInfo" :key="indexName">
         <div class="ct-sub">
-          <i class="icon icon-clothes"></i>
-          <p class="content">穿衣 {{liveInfo.clothes&&liveInfo.clothes.title}}</p>
+          <i class="icon" :class="getClass(indexName)"></i>
+          <p class="content">{{indexName}} {{val&&val.title}}</p>
         </div>
-        <div class="ct-detail">{{liveInfo.clothes&&liveInfo.clothes.desc}}</div>
-      </li>
-      <li>
-        <div class="ct-sub">
-          <i class="icon icon-sports"></i>
-          <p class="content">运动 {{liveInfo.cl&&liveInfo.cl.title}}</p>
-        </div>
-        <div class="ct-detail">{{liveInfo.cl&&liveInfo.cl.desc}}</div>
-      </li>
-      <li>
-        <div class="ct-sub">
-          <i class="icon icon-cold"></i>
-          <p class="content">感冒 {{liveInfo.cold&&liveInfo.cold.title}}</p>
-        </div>
-        <div class="ct-detail">{{liveInfo.cold&&liveInfo.cold.desc}}</div>
-      </li>
-      <li>
-        <div class="ct-sub">
-          <i class="icon icon-gj"></i>
-          <p class="content">逛街 {{liveInfo.gj&&liveInfo.gj.title}}</p>
-        </div>
-        <div class="ct-detail">{{liveInfo.gj&&liveInfo.gj.desc}}</div>
-      </li>
-      <li>
-        <div class="ct-sub">
-          <i class="icon icon-uv"></i>
-          <p class="content">防晒 {{liveInfo.uv&&liveInfo.uv.title}}</p>
-        </div>
-        <div class="ct-detail">{{liveInfo.uv&&liveInfo.uv.desc}}</div>
-      </li>
-      <li>
-        <div class="ct-sub">
-          <i class="icon icon-wc"></i>
-          <p class="content">洗车 {{liveInfo.wash_car&&liveInfo.wash_car.title}}</p>
-        </div>
-        <div class="ct-detail">{{liveInfo.wash_car&&liveInfo.wash_car.desc}}</div>
+        <div class="ct-detail">{{val&&val.desc}}</div>
       </li>
     </ul>
   </div>
 </template>
 <script>
 export default {
+  data() {
+    return {
+      indexMap: {
+        穿衣: "cy",
+        感冒: "gm",
+        洗车: "xc",
+        晨练: "cl",
+        紫外线: "uv",
+        逛街: "gj",
+        钓鱼: "dy",
+        旅游: "ly",
+        约会: "yh",
+        化妆: "hz",
+        中暑: "zs",
+        晾晒: "ls",
+      },
+      otherIndex: {
+        transform:'translateX(0)'
+      }
+    };
+  },
   computed: {
     liveInfo() {
       return this.$store.state.liveDatas;
     },
+  },
+  methods: {
+    getClass(name) {
+      return "icon-" + this.indexMap[name];
+    },
+    getPrev(){
+      this.otherIndex.transform = 'translateX(0)';
+    },
+    getNext(){
+      this.otherIndex.transform = 'translateX(-420px)';
+    }
   },
 };
 </script>
@@ -64,6 +61,7 @@ export default {
 .live {
   margin-left: 20px;
   flex: 0 0 430px;
+  overflow: hidden;
   .l-top {
     margin-left: 10px;
     margin-bottom: 10px;
@@ -93,11 +91,11 @@ export default {
     }
     .l-prev {
       background-image: url(../assets/icon/all.png);
-      background-position: -191px 0;
+      background-position: -136px -154px;
     }
     .l-next {
       background-image: url(../assets/icon/all.png);
-      background-position: -136px -154px;
+      background-position: -191px 0;
     }
     &::after {
       content: "";
@@ -106,6 +104,8 @@ export default {
     }
   }
   .l-datas {
+    width: 840px;
+    transition: all 1s;
     li {
       height: 140px;
       width: 200px;
@@ -114,7 +114,7 @@ export default {
       border-radius: 10px;
       overflow: hidden;
       float: left;
-      margin-left: 15px;
+      margin-left: 10px;
       margin-bottom: 20px;
       .ct-sub,
       .ct-detail {
@@ -136,23 +136,41 @@ export default {
           margin-bottom: 20px;
           background-image: url(../assets/icon/all.png);
           background-size: 234px 212px !important;
-          &.icon-clothes {
+          &.icon-cy {
             background-position: -80px -37px;
           }
-          &.icon-sports {
-            background-position: -37px -43px;
-          }
-          &.icon-cold {
+          &.icon-gm {
             background-position: -74px -154px;
           }
-          &.icon-gj {
-            background-position: -33px -115px;
+          &.icon-xc {
+            background-position: -154px -111px;
+          }
+          &.icon-cl {
+            background-position: -37px -43px;
           }
           &.icon-uv {
             background-position: 0 -43px;
           }
-          &.icon-wc {
-            background-position: -154px -111px;
+          &.icon-gj {
+            background-position: -33px -115px;
+          }
+          &.icon-dy {
+            background-position: -154px -74px;
+          }
+          &.icon-ly {
+            background-position: -117px -74px;
+          }
+          &.icon-yh {
+            background-position: 0 -115px;
+          }
+          &.icon-hz {
+            background-position: -112px -115px;
+          }
+          &.icon-zs {
+            background-position: 0 -43px;
+          }
+          &.icon-ls {
+            background-position: -74px -80px;
           }
         }
         .content {

@@ -9,7 +9,7 @@
     <ul class="h-datas" :style="{transform:offset}">
       <li v-for="hour in hourDatas" :key="hour.time">
         <span class="h-time">{{hour.time}}</span>
-        <i class="h-weather-icon"></i>
+        <img class="h-weather-icon" :src="hour.iconSrc">
         <span class="h-weather-temp">{{hour.temperature}}</span>
       </li>
     </ul>
@@ -107,8 +107,6 @@ export default {
       .h-weather-icon {
         height: 30px;
         width: 30px;
-        background: url("../assets/icon/03.png");
-        background-size: 30px 30px;
       }
     }
   }

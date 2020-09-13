@@ -45,15 +45,18 @@ export default new Vuex.Store({
                     }
                     return {
                         time: hour.time,
+                        iconSrc: 'http://app1.showapi.com/weather/icon/day/' + hour.weather_code + '.png',
                         temperature: hour.temperature + '°'
                     };
                 });
                 newList.splice(bIndex, 0, {
                     time: times[0],
+                    iconSrc:'https://mat1.gtimg.com/pingjs/ext2020/weather/pc/icon/weather/rise.png',
                     temperature: '日出'
                 });
                 newList.splice(eIndex, 0, {
                     time: times[1],
+                    iconSrc:'https://mat1.gtimg.com/pingjs/ext2020/weather/pc/icon/weather/set.png',
                     temperature: '日落'
                 })
                 return newList;
@@ -202,15 +205,27 @@ export default new Vuex.Store({
                     wash_car,
                     cl,
                     uv,
-                    gj
+                    gj,
+                    dy,//钓鱼
+                    travel,//旅游
+                    yh,//交通
+                    beauty,//空气污染扩散条件
+                    zs,
+                    ls//晾晒
                 } = res.f1.index;
                 context.commit('setLiveInfo', {
-                    clothes,
-                    cold,
-                    wash_car,
-                    cl,
-                    uv,
-                    gj
+                    "穿衣":clothes,
+                    "感冒":cold,
+                    "洗车":wash_car,
+                    "晨练":cl,
+                    "紫外线":uv,
+                    "逛街":gj,
+                    "钓鱼":dy,
+                    "旅游":travel,
+                    "约会":yh,
+                    "化妆":beauty,
+                    "中暑":zs,
+                    "晾晒":ls
                 })
                 //更新近七天数据
                 axios
